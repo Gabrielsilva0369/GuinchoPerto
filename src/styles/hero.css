@@ -1,0 +1,236 @@
+/* ==========================================================================
+   Guincho Perto — Hero principal
+   Imagem do caminhão + título + subtítulo + botões + benefícios
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  width: 100%;
+  padding-bottom: 26px;
+}
+
+/* ---------- Mídia (imagem + gradientes) ---------- */
+.hero__media {
+  position: relative;
+  width: 100%;
+  height: 470px;
+  overflow: hidden;
+}
+
+.hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+  display: block;
+}
+
+/* Gradiente suave no topo (leitura da logo) */
+.hero__gradient-top {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 160px;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 5, 5, 0.85) 0%,
+    rgba(5, 5, 5, 0.35) 45%,
+    rgba(5, 5, 5, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Gradiente forte na base (integração com o conteúdo) */
+.hero__gradient-bottom {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 260px;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 5, 5, 0) 0%,
+    rgba(5, 5, 5, 0.65) 45%,
+    rgba(5, 5, 5, 0.95) 78%,
+    #050505 100%
+  );
+  pointer-events: none;
+}
+
+/* Brilho amarelo discreto nas laterais */
+.hero__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120px 320px at 0% 60%, rgba(230, 85, 18, 0.22), transparent 70%),
+    radial-gradient(120px 320px at 100% 60%, rgba(230, 85, 18, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+/* ---------- Conteúdo (puxado sobre a base da imagem) ---------- */
+.hero__content {
+  position: relative;
+  z-index: 2;
+  margin-top: -106px;
+  padding: 0 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* ---------- Título ---------- */
+.hero__title {
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -1px;
+  font-size: clamp(68px, 20vw, 96px);
+  white-space: nowrap;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.9);
+  margin: 0;
+}
+
+.hero__title-guincho {
+  color: var(--cor-branco);
+}
+
+.hero__title-24h {
+  color: var(--cor-amarelo);
+  margin-left: 0.12em;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9), 0 0 18px var(--cor-amarelo-sombra);
+}
+
+/* ---------- Subtítulo ---------- */
+.hero__subtitle {
+  margin: 14px auto 0;
+  max-width: 360px;
+  font-family: var(--fonte-corpo);
+  font-size: clamp(16px, 4.6vw, 19px);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--cor-branco);
+}
+
+.hero__subtitle .accent {
+  color: var(--cor-amarelo);
+}
+
+/* ---------- Botões ---------- */
+.hero__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  white-space: nowrap;
+  color: var(--cor-branco);
+}
+
+.hero__btn svg {
+  flex: 0 0 auto;
+}
+
+/* Principal — WhatsApp (mesmo tamanho do botão preto) */
+.hero__btn--whatsapp {
+  width: 72%;
+  height: 58px;
+  margin: 22px auto 0;
+  padding: 0 16px;
+  font-size: clamp(19px, 5.6vw, 25px);
+  letter-spacing: 0.4px;
+  border-radius: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(180deg, #ff7a33 0%, #b83d00 100%);
+  color: var(--cor-branco);
+  transition: filter 0.18s ease, transform 0.12s ease;
+}
+
+.hero__btn--whatsapp svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (hover: hover) {
+  .hero__btn--whatsapp:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+}
+
+.hero__btn--whatsapp:active {
+  transform: scale(0.985);
+}
+
+/* Secundário — Ligar */
+.hero__btn--call {
+  width: 72%;
+  height: 58px;
+  margin-top: 14px;
+  padding: 0 16px;
+  font-size: clamp(19px, 5.6vw, 25px);
+  letter-spacing: 0.4px;
+  border-radius: 18px;
+  border: 2px solid var(--cor-amarelo);
+  background: #000000;
+  transition: transform 0.12s ease, filter 0.18s ease;
+}
+
+.hero__btn--call svg {
+  width: 22px;
+  height: 22px;
+  color: var(--cor-amarelo);
+}
+
+@media (hover: hover) {
+  .hero__btn--call:hover {
+    filter: brightness(1.12);
+  }
+}
+
+.hero__btn--call:active {
+  transform: scale(0.985);
+}
+
+.hero__btn:focus-visible {
+  outline: 2px solid var(--cor-branco);
+  outline-offset: 3px;
+}
+
+/* Respeita usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .hero__btn--whatsapp,
+  .hero__btn--call {
+    transition: none;
+  }
+
+  .hero__btn--whatsapp:hover,
+  .hero__btn--whatsapp:active,
+  .hero__btn--call:active {
+    transform: none;
+  }
+}
+
+/* ---------- Linha de benefícios ---------- */
+.hero__benefits {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 0 4px;
+  font-family: var(--fonte-corpo);
+  font-size: clamp(10px, 3.05vw, 14px);
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  color: var(--cor-cinza-texto);
+  white-space: nowrap;
+}
+
+.hero__benefits-dot {
+  flex: 0 0 auto;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cor-amarelo);
+}

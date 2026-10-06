@@ -1,0 +1,155 @@
+/* ==========================================================================
+   Guincho Perto — Chamada final (conversão) + rodapé discreto
+   ========================================================================== */
+
+.final-cta {
+  margin-top: 26px;
+}
+
+/* ---------- Painel ---------- */
+.final-cta__panel {
+  margin: 0 16px;
+  padding: 24px;
+  background: var(--cor-card);
+  border: 1px solid var(--cor-cinza-borda);
+  border-radius: 16px;
+  text-align: center;
+}
+
+/* ---------- Chamada ---------- */
+.final-cta__headline {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--cor-branco);
+  line-height: 1.02;
+  letter-spacing: 0.3px;
+  font-size: clamp(28px, 8vw, 38px);
+}
+
+.final-cta__headline .accent {
+  color: var(--cor-amarelo);
+}
+
+/* ---------- Telefone ---------- */
+.final-cta__phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0 20px;
+  color: var(--cor-branco);
+  font-family: var(--fonte-corpo);
+  font-weight: 800;
+  font-size: clamp(22px, 6.4vw, 30px);
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 0.12s ease;
+}
+
+.final-cta__phone svg {
+  flex: 0 0 auto;
+  width: 0.72em;
+  height: 0.72em;
+  color: var(--cor-amarelo);
+}
+
+.final-cta__phone:active {
+  transform: scale(0.98);
+}
+
+.final-cta__phone:focus-visible {
+  outline: 2px solid var(--cor-branco);
+  outline-offset: 3px;
+}
+
+/* ---------- Botão WhatsApp ---------- */
+.final-cta__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 255px;
+  height: 58px;
+  margin: 0 auto;
+  padding: 0 16px;
+  border-radius: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(180deg, #ff7a33 0%, #b83d00 100%);
+  color: var(--cor-branco);
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  font-size: clamp(19px, 5.6vw, 25px);
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  transition: filter 0.18s ease, transform 0.12s ease;
+}
+
+.final-cta__btn svg {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+}
+
+@media (hover: hover) {
+  .final-cta__btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+}
+
+.final-cta__btn:active {
+  transform: scale(0.985);
+}
+
+.final-cta__btn:focus-visible {
+  outline: 2px solid var(--cor-branco);
+  outline-offset: 3px;
+}
+
+/* ---------- Rodapé discreto ---------- */
+.final-cta__footer {
+  margin: 0;
+  padding: 20px 16px;
+  text-align: center;
+  font-family: var(--fonte-corpo);
+  font-size: 12px;
+  color: var(--cor-cinza-texto);
+}
+
+.final-cta__credit {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #8a8a8a;
+}
+
+.final-cta__credit a {
+  color: var(--cor-cinza-texto);
+  font-weight: 600;
+}
+
+.final-cta__credit a:hover {
+  color: var(--cor-amarelo);
+}
+
+.final-cta__credit a:focus-visible {
+  outline: 2px solid var(--cor-branco);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respeita usuários que preferem menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .final-cta__btn,
+  .final-cta__phone {
+    transition: none;
+  }
+
+  .final-cta__btn:hover,
+  .final-cta__btn:active,
+  .final-cta__phone:active {
+    transform: none;
+  }
+}
