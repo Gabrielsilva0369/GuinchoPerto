@@ -9,7 +9,7 @@
 
 // 1) Cole aqui a URL do Web App do Apps Script (após o deploy).
 //    Enquanto estiver vazio, o log fica DESATIVADO (nenhuma chamada é feita).
-const CLICK_LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbxUyqaPY0tLiGv-X0Ur3d4pXt2ahFnA2aUb2elKSkAiieDXqv7eqFYWpxM7RrWSt0c/exec";
+const CLICK_LOG_ENDPOINT = "https://script.google.com/macros/s/AKfycbz8zp29DpGTvv67eVsf2DFxOCDVZVdjGdYgixdReWnglE1wrwr4M79a7FOVR701qAUhOw/exec";
 
 // 2) Buscar o IP do visitante por um serviço externo (api.ipify.org)?
 //    O Apps Script/Sheets não captura IP de forma confiável, então pegamos

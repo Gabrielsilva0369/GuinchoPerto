@@ -32,7 +32,8 @@ function doPost(e) {
         "gclid", "gbraid", "wbraid",
         "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
         "page", "referrer", "user_agent", "language", "platform",
-        "screen", "viewport", "dpr", "timezone", "cores", "memory"
+        "screen", "viewport", "dpr", "timezone", "cores", "memory",
+        "device_hash"
       ]);
     }
 
@@ -41,7 +42,8 @@ function doPost(e) {
       data.gclid, data.gbraid, data.wbraid,
       data.utm_source, data.utm_medium, data.utm_campaign, data.utm_term, data.utm_content,
       data.page, data.referrer, data.user_agent, data.language, data.platform,
-      data.screen, data.viewport, data.dpr, data.timezone, data.cores, data.memory
+      data.screen, data.viewport, data.dpr, data.timezone, data.cores, data.memory,
+      data.device_hash
     ]);
 
     return ContentService
@@ -119,6 +121,7 @@ e "Contagem" nos valores — atualiza sozinha conforme chegam cliques.
 | `screen` / `viewport` / `dpr` | Tela | Resoluções "impossíveis" = bot |
 | `timezone` | Fuso do dispositivo | Fora do Brasil clicando em anúncio local = suspeito |
 | `cores` / `memory` | Núcleos de CPU / memória | Valores atípicos = automação |
+| `device_hash` | Impressão digital do aparelho (canvas + hardware) | **Mesmo hash com ids diferentes = mesmo aparelho limpando dados**; usado em `BLOCKED_DEVICE_HASHES` (`src/lib/ipBlock.ts`) |
 
 ---
 
