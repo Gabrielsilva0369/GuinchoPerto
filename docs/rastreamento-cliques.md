@@ -17,25 +17,28 @@ fraude nos anúncios do Google Ads.
 3. Apague o conteúdo e cole o código abaixo. Salve.
 
 ```js
-// Apps Script — recebe os cliques e grava na planilha.
+// Apps Script — recebe os cliques, grava na planilha e identifica a mesma pessoa.
 const SHEET_NAME = "cliques";
 
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+const HEADERS = [
+  "recebido_em", "ts_cliente", "cta", "visitor_id", "ip",
+  "gclid", "gbraid", "wbraid",
+  "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+  "page", "referrer", "user_agent", "language", "platform",
+  "screen", "viewport", "dpr", "timezone", "cores", "memory",
+  "device_hash", "pessoa", "cliques_pessoa", "motivo"
+];
 
-    if (sh.getLastRow() === 0) {
-      sh.appendRow([
-        "recebido_em", "ts_cliente", "cta", "visitor_id", "ip",
-        "gclid", "gbraid", "wbraid",
-        "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
-        "page", "referrer", "user_agent", "language", "platform",
-        "screen", "viewport", "dpr", "timezone", "cores", "memory",
-        "device_hash"
-      ]);
-    }
+// Colunas (1 = A). O IP NÃO entra na identificação: no 4G ele muda
+// para a mesma pessoa e é compartilhado por pessoas diferentes.
+const COL = { visitor: 4, hash: 25, pessoa: 26, total: 27, motivo: 28 };
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000); // evita dois cliques simultâneos pegarem o mesmo código
+    var data = JSON.parse(e.postData.contents);
+    var sh = getSheet();
 
     sh.appendRow([
       new Date(), data.ts, data.cta, data.visitor_id, data.ip,
@@ -46,14 +49,73 @@ function doPost(e) {
       data.device_hash
     ]);
 
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: true }))
-      .setMimeType(ContentService.MimeType.JSON);
+    var row = sh.getLastRow();
+    var rows = sh.getRange(2, 1, row - 1, COL.motivo).getValues();
+    var r = identificar(rows, rows.length - 1);
+    sh.getRange(row, COL.pessoa).setValue(r.pessoa);
+    sh.getRange(row, COL.total).setFormula("=COUNTIF(Z:Z,Z" + row + ")");
+    sh.getRange(row, COL.motivo).setValue(r.motivo);
+
+    return json({ ok: true });
   } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return json({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
   }
+}
+
+/** Decide quem é a pessoa da linha i, olhando só as linhas anteriores. */
+function identificar(rows, i) {
+  var vid = String(rows[i][COL.visitor - 1] || "");
+  var hash = String(rows[i][COL.hash - 1] || "");
+  var porHash = "";
+  var maior = 0;
+
+  for (var j = 0; j < i; j++) {
+    var p = String(rows[j][COL.pessoa - 1] || "");
+    if (!p) continue;
+    maior = Math.max(maior, parseInt(p.slice(1), 10) || 0);
+    // Mesmo visitor_id = mesmo navegador: certeza.
+    if (vid && String(rows[j][COL.visitor - 1]) === vid) {
+      return { pessoa: p, motivo: "mesmo navegador" };
+    }
+    // Mesmo device_hash = mesmo aparelho (aba anônima, dados limpos...).
+    if (!porHash && hash && String(rows[j][COL.hash - 1]) === hash) porHash = p;
+  }
+
+  if (porHash) return { pessoa: porHash, motivo: "mesmo aparelho (provável)" };
+  return { pessoa: "P" + ("000" + (maior + 1)).slice(-4), motivo: "primeiro clique" };
+}
+
+/** Rode UMA vez pelo editor para preencher pessoa/motivo nas linhas antigas. */
+function preencherPessoas() {
+  var sh = getSheet();
+  var last = sh.getLastRow();
+  if (last < 2) return;
+  var rows = sh.getRange(2, 1, last - 1, COL.motivo).getValues();
+  var saida = [];
+  for (var i = 0; i < rows.length; i++) {
+    rows[i][COL.pessoa - 1] = ""; // recalcula do zero
+    var r = identificar(rows, i);
+    rows[i][COL.pessoa - 1] = r.pessoa;
+    saida.push([r.pessoa, "=COUNTIF(Z:Z,Z" + (i + 2) + ")", r.motivo]);
+  }
+  sh.getRange(2, COL.pessoa, saida.length, 3).setValues(saida);
+}
+
+function getSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  if (sh.getRange(1, COL.motivo).getValue() === "") {
+    sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  }
+  return sh;
+}
+
+function json(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
@@ -89,7 +151,21 @@ chamada externa é feita).
 
 ---
 
-## Passo 4 — Contagem de cliques por botão
+## Passo 4 — Destacar a mesma pessoa clicando
+
+O script identifica a pessoa só por `visitor_id` e `device_hash`. O **IP fica
+de fora**: no 4G ele muda para a mesma pessoa e é compartilhado por várias.
+
+1. Se a planilha já tinha cliques, no Apps Script escolha a função
+   **preencherPessoas** e clique em **Executar** (uma vez só).
+2. Em **Formatar → Formatação condicional**, intervalo `A2:AB1000`,
+   **A fórmula personalizada é**:
+   - `=$AA2>=3` → vermelho claro (3 cliques ou mais)
+   - `=$AA2=2` → amarelo claro (2 cliques)
+
+---
+
+## Passo 5 — Contagem de cliques por botão
 
 Em uma nova aba da planilha (ex.: "resumo"), use:
 
@@ -121,6 +197,9 @@ e "Contagem" nos valores — atualiza sozinha conforme chegam cliques.
 | `screen` / `viewport` / `dpr` | Tela | Resoluções "impossíveis" = bot |
 | `timezone` | Fuso do dispositivo | Fora do Brasil clicando em anúncio local = suspeito |
 | `cores` / `memory` | Núcleos de CPU / memória | Valores atípicos = automação |
+| `pessoa` | Código da pessoa (P0001...), dado pelo script | **Mesmo código em várias linhas = mesma pessoa clicando** |
+| `cliques_pessoa` | Quantos cliques essa pessoa já deu | Base para a cor na planilha |
+| `motivo` | Por que o script juntou: `mesmo navegador` (visitor_id, certeza) ou `mesmo aparelho (provável)` (device_hash) | Provável = conferir horário/modelo antes de bloquear |
 | `device_hash` | Impressão digital do aparelho (canvas + hardware) | **Mesmo hash com ids diferentes = mesmo aparelho limpando dados**; usado em `BLOCKED_DEVICE_HASHES` (`src/lib/ipBlock.ts`) |
 
 ---

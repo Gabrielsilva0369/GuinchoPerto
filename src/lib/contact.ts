@@ -1,9 +1,11 @@
 export type PhoneKey = "novo" | "atendimento";
 
 const PHONES: Record<PhoneKey, { ddi: string; ddd: string; number: string }> = {
-  novo: { ddi: "55", ddd: "41", number: "999999999" },
-  atendimento: { ddi: "55", ddd: "41", number: "999999999" },
+  novo: { ddi: "55", ddd: "41", number: "991273955" },
+  atendimento: { ddi: "55", ddd: "41", number: "991273955" },
 };
+
+const WHATSAPP_MESSAGE = "Olá! Preciso de um Guincho Perto!!!";
 
 export interface Contact {
   PHONE_DISPLAY: string;
@@ -17,7 +19,7 @@ export function getContact(key: PhoneKey): Contact {
 
   return {
     PHONE_DISPLAY: `(${ddd}) ${number.slice(0, 5)}-${number.slice(5)}`,
-    WHATSAPP_URL: `https://wa.me/${digits}?text=Olá%2C%20preciso%20de%20um%20guincho.%20Pode%20me%20atender%20agora%3F`,
+    WHATSAPP_URL: `https://wa.me/${digits}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`,
     CALL_URL: `tel:+${digits}`,
   };
 }
