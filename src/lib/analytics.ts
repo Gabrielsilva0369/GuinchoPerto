@@ -9,9 +9,9 @@ import type { MouseEvent } from "react";
 import { logClick } from "./clickLog";
 
 // IDs de conversão do Google Ads
-// (em branco por enquanto — preencher com "AW-.../..." da conta do Guincho Perto)
-const CALL_CONVERSION_SEND_TO = ""; // Recurso "clique para ligar"
-const WHATSAPP_CONVERSION_SEND_TO = ""; // Contato (WhatsApp)
+// Conversão "Contato" da conta do Guincho Perto (usada nos dois tipos de botão)
+const CALL_CONVERSION_SEND_TO = "AW-18490109090/xhpjCIG15pMdEKLZ4vBE"; // Clique para ligar
+const WHATSAPP_CONVERSION_SEND_TO = "AW-18490109090/xhpjCIG15pMdEKLZ4vBE"; // Clique no WhatsApp
 
 declare global {
   interface Window {
